@@ -8,7 +8,6 @@ VizMorph is a Python-based application that analyzes Tableau workbooks and sugge
 - **Intelligent Suggestions**: Uses heuristic rules to suggest alternative visualizations
 - **D3.js Previews**: Generates interactive D3.js visualizations for suggested charts
 - **Multiple Export Formats**: Export suggestions as JSON, D3.js code, or Vega-Lite specifications
-- **Web Interface**: Flask-based web interface for browser access
 - **Desktop App**: Electron-based desktop application for native OS integration
 - **RESTful API**: Complete API for integration with other tools
 
@@ -20,7 +19,6 @@ VizMorph is a Python-based application that analyzes Tableau workbooks and sugge
 2. **Visualization Recommender** (`src/viz_recommender.py`): Applies heuristic rules to suggest alternatives
 3. **Visualization Generator** (`src/viz_generator.py`): Creates D3.js configurations and exports
 4. **Flask API** (`app.py`): RESTful API endpoints for all functionality
-5. **Web Interface** (`templates/index.html`): Browser-based user interface
 6. **Electron App** (`electron-ui/`): Desktop application with native OS integration
 
 ### Supported Visualization Types
