@@ -154,12 +154,29 @@ class TableauParser:
             'tooltip-shelf': 'tooltip'
         }
         
+        # Try multiple approaches to find shelf information
         for shelf_name, shelf_key in shelf_mapping.items():
+            # Method 1: Direct shelf attribute
             shelf_elements = worksheet.findall(f'.//*[@shelf="{shelf_name}"]')
             for element in shelf_elements:
                 field_name = element.get('name', '')
                 if field_name:
                     shelves[shelf_key].append(field_name)
+        
+        # Method 2: Look for pane elements with specific shelf names
+        panes = worksheet.findall('.//pane')
+        for pane in panes:
+            pane_name = pane.get('name', '')
+            if 'columns' in pane_name.lower():
+                for field in pane.findall('.//field'):
+                    field_name = field.get('name', '')
+                    if field_name and field_name not in shelves['columns']:
+                        shelves['columns'].append(field_name)
+            elif 'rows' in pane_name.lower():
+                for field in pane.findall('.//field'):
+                    field_name = field.get('name', '')
+                    if field_name and field_name not in shelves['rows']:
+                        shelves['rows'].append(field_name)
         
         return shelves
     
@@ -190,18 +207,27 @@ class TableauParser:
         dimensions = []
         measures = []
         
-        # This is a simplified extraction - in reality, you'd need to 
-        # cross-reference with datasource definitions
-        field_elements = worksheet.findall('.//field')
+        # This is a more robust extraction that also considers shelf info
+        field_elements = worksheet.findall('.//datasource-dependencies/.//column')
         for field in field_elements:
-            field_name = field.get('name', '')
-            field_type = field.get('datatype', '')
+            field_name = field.get('name')
+            field_role = field.get('role')
             
             if field_name:
-                if field_type in ['integer', 'real']:
+                if field_role == 'measure':
                     measures.append(field_name)
-                else:
+                elif field_role == 'dimension':
                     dimensions.append(field_name)
+        
+        # Fallback to shelf info if direct dependencies are not found
+        if not dimensions and not measures:
+            for shelf in self._extract_shelves(worksheet).values():
+                for field_name in shelf:
+                    # Simple heuristic: fields with aggregation are measures
+                    if any(agg in field_name for agg in ['SUM', 'AVG', 'COUNT']):
+                        measures.append(field_name)
+                    else:
+                        dimensions.append(field_name)
         
         return dimensions, measures
     
