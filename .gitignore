@@ -61,10 +61,6 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Flask stuff:
-instance/
-.webassets-cache
-
 # Scrapy stuff:
 .scrapy
 
@@ -154,12 +150,7 @@ Thumbs.db
 *.swo
 *~
 
-# Application specific
-uploads/*
-!uploads/.gitkeep
-logs/*
-!logs/.gitkeep
-static/visualizations/
+# Application specific - Desktop version
 *.twb
 *.twbx
 
